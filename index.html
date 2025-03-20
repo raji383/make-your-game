@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Arkanoid Game</title>
     <link rel="stylesheet" href="style.css">
-    
 </head>
-
 <body>
-    <h1>Arkanoid game without Canvas</h1>
-    <h2>score: <span id="score">0</span></h2>
+    <h1>Arkanoid Game without Canvas</h1>
+    <div id="scoreboard">
+        <span>Score: <span id="score">0</span></span>
+        <span>Lives: <span id="lives">3</span></span>
+        <span>Time: <span id="timer">0</span>s</span>
+    </div>
+    <div id="instructions">Press Space to start, Arrow keys to move, P to pause</div>
     <div id="bord">
         <div class="ball" id="ball"></div>
         <div class="blok" id="blok"></div>
-        <p id="mesag">game over</p>
-
+        <p id="mesag"></p>
+        <div id="pauseMenu" class="hidden">
+            <h2>Paused</h2>
+            <button id="continueBtn">Continue</button>
+            <button id="restartBtn">Restart</button>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
-
 </html>

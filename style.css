@@ -1,19 +1,90 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Spicy+Rice&display=swap');
 
 body {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
 }
 
 #bord {
-    position: relative;
     width: 800px;
     height: 700px;
-    background: #222;
-    margin: 20px auto;
+    background-color: #555;
+    border: 2px solid #333;
+    position: relative;
+    margin: 0 auto;
     overflow: hidden;
-    border: 2px solid white;
+}
+
+#scoreboard {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+#scoreboard span {
+    margin: 0 20px;
+}
+
+.ball {
+    width: 20px;
+    height: 20px;
+    background-color: #2196F3;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.blok {
+    width: 100px;
+    height: 15px;
+    background-color: #FF5722;
+    position: absolute;
+    top: 650px;
+}
+
+.brick {
+    position: absolute;
+    transition: opacity 0.2s;
+}
+
+#mesag {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    color: #D32F2F;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#pauseMenu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#pauseMenu.hidden {
+    display: none;
+}
+
+#pauseMenu button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#instructions {
+    font-size: 18px;
+    color: #555;
+    margin: 10px 0;
 }
 
 p {
@@ -22,32 +93,4 @@ p {
     text-align: center;
     color: blueviolet;
     font-size: 10em;
-}
-
-.ball {
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    border-radius: 50%;
-    position: absolute;
-}
-
-.blok {
-    position: absolute;
-    width: 100px;
-    height: 15px;
-    top: 650px;
-    background-color: blue;
-    border: 1px solid black;
-}
-#mesag {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border: 2px solid white;
 }
