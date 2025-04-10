@@ -41,6 +41,6 @@ body {
   background-image: url('mario.png');
   background-size: cover;
   position: absolute;
-  top: 0;
-  left: -880%;
+  top: -650%;
+  left: 0%;
 }

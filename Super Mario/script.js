@@ -31,7 +31,9 @@ class Player {
         this.isJumping = false;
         this.velocityY = 0;
         class gg{
-            
+            constructor(){
+                this.ju
+            }
         }
     }
 
