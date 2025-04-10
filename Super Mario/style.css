@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#game {
+  width: 900px;
+  height: 500px;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #000;
+}
+
+#background {
+  width: 7038px;
+  height: 1000px;
+  background-image: url('bg-1-1.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top left;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#player {
+  width: 50px;
+  height: 70px;
+  left: 20px;
+  overflow: hidden;
+  position: absolute;
+}
+
+#player-img {
+  width: 487px;
+  height: 780px;
+  background-image: url('mario.png');
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: -880%;
+}
