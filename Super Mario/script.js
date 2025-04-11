@@ -29,64 +29,120 @@ class Player {
         this.element = element;
         this.marioim = marioim;
         this.positionX = 300;
-        this.positionY = 395;
+        this.positionY = 390;
         this.speed = 5;
         this.jumpSpeed = 10;
         this.gravity = 0.5;
+        this.frameTimer = 0;
+        this.frameInterval = 100;
         this.frameX = 0;
         this.isJumping = false;
         this.velocityY = 0;
         this.moveright = true;
     }
 
-    moveLeft() {
+    moveLeft(deltaTime) {
+        
         this.moveright = false;
+        if (!this.isJumping) {
+                  this.positionY = 395;
         this.marioim.style.top = '0';
+        }
+  
         if (this.positionX > 200) {
             this.positionX -= this.speed;
         } else if (this.game.background.positionX > 0) {
             this.game.background.positionX -= this.speed;
         }
-
-        this.frameX = this.frameX < 450 ? 850 : this.frameX - 150;
-        this.marioim.style.left = `-${this.frameX}%`;
+        if (!this.isJumping) {
+            this.frameTimer+=deltaTime
+            if (this.frameTimer >= this.frameInterval) {
+                this.frameTimer = 0;
+            if (this.frameX < 450) {
+                this.frameX =   850
+            }else{
+                this.frameX -= 150;
+            } 
+        }
+            this.marioim.style.left = `-${this.frameX}%`; 
+        }
+        
     }
 
-    moveRight() {
+    moveRight(deltaTime) {
+     
+        
         this.moveright = true;
-        this.marioim.style.top = '-650%';
-
+    
+        if (!this.isJumping) {
+            this.positionY = 390;
+            this.marioim.style.top = '-650%';
+        }
+    
         if (this.positionX < 600) {
             this.positionX += this.speed;
         } else if (this.game.background.positionX < this.game.background.maxScroll) {
             this.game.background.positionX += this.speed;
         }
-
-        this.frameX = this.frameX > 300 ? 0 : this.frameX + 150;
-        this.marioim.style.left = `-${this.frameX}%`;
+    
+        if (!this.isJumping) {
+            this.frameTimer += deltaTime;
+            if (this.frameTimer >= this.frameInterval) {
+                this.frameTimer = 0;
+                if (this.frameX >= 300) {
+                    this.frameX = 0;
+                } else {
+                    this.frameX += 150;
+                }
+            }
+            this.marioim.style.left = `-${this.frameX}%`;
+        }
     }
+    
 
     jump() {
         if (!this.isJumping) {
+            console.log("Jump triggered!");
             this.isJumping = true;
             this.velocityY = -this.jumpSpeed;
-            this.marioim.style.left = this.moveright ? '-720%' : '-150%';
+            this.positionY += this.velocityY;
+            if (this.moveright) {
+                this.marioim.style.left = '-720%'
+            } else {
+                this.marioim.style.left = '-150%';
+            }
         }
     }
+    
 
     applyGravity() {
         if (this.isJumping) {
             this.velocityY += this.gravity;
             this.positionY += this.velocityY;
-
+    
+            if (this.moveright) {
+                this.marioim.style.top = '-650%'; 
+                this.marioim.style.left = '-720%'; 
+            } else {
+                this.marioim.style.top = '0';      
+                this.marioim.style.left = '-150%'; 
+            }
+    
             if (this.positionY >= 395) {
-                this.positionY = 395;
+                if (!this.moveright) {
+                      this.positionY = 395;
+                }else{
+                    this.positionY = 390;
+                }
+              
                 this.isJumping = false;
                 this.velocityY = 0;
                 this.marioim.style.left = this.moveright ? '0' : '-850%';
             }
         }
     }
+    
+    
 
     draw() {
         this.element.style.left = `${this.positionX}px`;
@@ -139,6 +195,12 @@ class Input {
         window.addEventListener('keyup', e => {
             if (['ArrowLeft', 'ArrowRight', ' ', 'p'].includes(e.key)) {
                 this.keys.splice(this.keys.indexOf(e.key), 1);
+                if (this.game.player.moveright) {
+                    this.game.player.marioim.style.left = '0' 
+                   
+                }else{
+                    this.game.player.marioim.style.left= '-850%';
+                }
             }
         });
     }
@@ -153,17 +215,18 @@ class Game {
         this.score = 0;
     }
 
-    updateInput() {
+    updateInput(deltaTime) {
         const keys = this.input.keys;
-        if (keys.includes('ArrowLeft')) this.player.moveLeft();
-        if (keys.includes('ArrowRight')) this.player.moveRight();
-        if (keys.includes(' ')) this.player.jump();
+        if (keys.includes(' ')) this.player.jump(deltaTime);
+        if (keys.includes('ArrowLeft')) this.player.moveLeft(deltaTime);
+        if (keys.includes('ArrowRight')) this.player.moveRight(deltaTime);
+        
     }
 
-    draw() {
-        this.updateInput();
+    draw(deltaTime) {
+        this.updateInput(deltaTime);
         this.background.draw();
-        this.player.applyGravity();
+        this.player.applyGravity(deltaTime);
         this.player.draw();
         this.coin.checkCollision();
         this.coin.draw();
@@ -171,10 +234,12 @@ class Game {
 }
 
 const game = new Game();
-
-function animation() {
-    game.draw();
+let lastTime =0;
+function animation(timeStamp) {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
+    game.draw(deltaTime);
     requestAnimationFrame(animation);
 }
 
-animation();
+animation(0);
