@@ -42,5 +42,28 @@ body {
   background-size: cover;
   position: absolute;
   top: -650%;
-  left: 0%;
+  left: 0;
+}
+#coin {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: gold;
+  border-radius: 50%;
+  top: 395px;
+  left: 1000px;
+  z-index: 3;
+}
+
+#score {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  font-family: sans-serif;
+  color: white;
+  background: rgba(0,0,0,0.5);
+  padding: 8px 16px;
+  border-radius: 8px;
+  z-index: 10;
 }
