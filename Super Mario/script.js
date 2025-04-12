@@ -27,6 +27,8 @@ class Background {
 class Player {
     constructor(element, game, marioim) {
         this.game = game;
+        this.width=50;
+        this.height=70;
         this.element = element;
         this.marioim = marioim;
         this.positionX = 300;
@@ -188,6 +190,13 @@ class Map {
             { startX: 2850, endX: 2950, yPosition: 500 },
             { startX: 5090, endX: 5150, yPosition: 1000 },
         ];
+        this.bloks = [
+            { startX: 900, endX: 990, startY: 390, endY: 350, box: false },
+            { startX: 1235, endX: 1325, startY: 390, endY: 310, box: false },
+            { startX: 1500, endX: 1590, startY: 390, endY: 340, box: false },
+            { startX: 1870, endX: 1940, startY: 390, endY: 340, box: false },
+            { startX: 4900, endX: 4990, startY: 390, endY: 365, box: false },
+        ]
     }
 
     update() {
@@ -207,9 +216,31 @@ class Map {
                 }
             }
         });
+        this.bloks.forEach(blok => {
+            console.log(this.player.positionX + this.background.positionX)
+            if (
+                this.player.positionX + this.background.positionX > blok.startX &&
+                this.player.positionX + this.background.positionX < blok.endX &&
+                this.player.positionY > blok.endY
+
+            ) {
+                if (this.game.player.moveright) {
+                      this.player.positionX = blok.startX - this.background.positionX
+                }else{
+                    this.player.positionX = blok.endX - this.background.positionX
+                }
+              
+            }
+            if ( this.player.positionY + this.player.height <= blok.startY &&
+                this.player.positionX + this.background.positionX + this.player.width > blok.startX &&
+                this.player.positionX + this.background.positionX < blok.endX) {
+                this.player.positionY = blok.startY - this.player.height;
+                this.player.isJumping = false;
+            }
+            
+        });
     }
 }
-
 class Game {
     constructor() {
         this.background = new Background(back);
@@ -218,7 +249,7 @@ class Game {
         this.map = new Map(this, this.background, this.player)
         this.score = 0;
         this.fulling = false;
-        this.gameOver=false;
+        this.gameOver = false;
     }
 
     updateInput(deltaTime) {
@@ -235,8 +266,8 @@ class Game {
         this.player.applyGravity(deltaTime);
         this.player.draw();
         this.map.update();
-        if (this.player.positionY>430) {
-            this.gameOver=true
+        if (this.player.positionY > 430) {
+            this.gameOver = true
         }
     }
 }
@@ -249,10 +280,10 @@ function animation(timeStamp) {
     game.draw(deltaTime);
     if (!game.gameOver) {
         requestAnimationFrame(animation);
-    }else{
-        over.style.display='block'
+    } else {
+        over.style.display = 'block'
     }
-    
+
 }
 
 animation(0);
