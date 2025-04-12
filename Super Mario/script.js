@@ -39,6 +39,7 @@ class Player {
         this.frameTimer = 0;
         this.frameInterval = 100;
         this.frameX = 0;
+        this.onground=true;
         this.isJumping = false;
         this.velocityY = 0;
         this.moveright = true;
@@ -48,7 +49,10 @@ class Player {
 
         this.moveright = false;
         if (!this.isJumping) {
-            this.positionY = 395;
+            if (this.onground) {
+                 this.positionY = 395;
+            }
+           
             this.marioim.style.top = '0';
         }
 
@@ -78,7 +82,9 @@ class Player {
         this.moveright = true;
 
         if (!this.isJumping) {
-            this.positionY = 390;
+            if (this.onground) {
+                this.positionY = 390;
+           }
             this.marioim.style.top = '-650%';
         }
 
@@ -191,7 +197,7 @@ class Map {
             { startX: 5090, endX: 5150, yPosition: 1000 },
         ];
         this.bloks = [
-            { startX: 900, endX: 990, startY: 390, endY: 350, box: false },
+            { startX: 900, endX: 990, startY: 390, endY: 330, box: false },
             { startX: 1235, endX: 1325, startY: 390, endY: 310, box: false },
             { startX: 1500, endX: 1590, startY: 390, endY: 340, box: false },
             { startX: 1870, endX: 1940, startY: 390, endY: 340, box: false },
@@ -216,29 +222,33 @@ class Map {
                 }
             }
         });
+        this.player.onground = false;
+
         this.bloks.forEach(blok => {
-            console.log(this.player.positionX + this.background.positionX)
             if (
                 this.player.positionX + this.background.positionX > blok.startX &&
                 this.player.positionX + this.background.positionX < blok.endX &&
                 this.player.positionY > blok.endY
-
             ) {
                 if (this.game.player.moveright) {
-                      this.player.positionX = blok.startX - this.background.positionX
-                }else{
-                    this.player.positionX = blok.endX - this.background.positionX
+                    this.player.positionX = blok.startX - this.background.positionX;
+                } else {
+                    this.player.positionX = blok.endX - this.background.positionX;
                 }
-              
             }
-            if ( this.player.positionY + this.player.height <= blok.startY &&
+        
+            if (
+                this.player.positionY + this.player.height <= blok.startY &&
                 this.player.positionX + this.background.positionX + this.player.width > blok.startX &&
-                this.player.positionX + this.background.positionX < blok.endX) {
+                this.player.positionX + this.background.positionX < blok.endX
+            ) {
+                this.player.onground = true;
                 this.player.positionY = blok.startY - this.player.height;
+                this.player.velocityY = 0;
                 this.player.isJumping = false;
             }
-            
         });
+        
     }
 }
 class Game {
