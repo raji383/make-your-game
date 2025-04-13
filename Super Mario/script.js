@@ -209,13 +209,14 @@ class Map {
 
         this.bloks = [
            /*onpop1*/ { startX: 930, endX: 990, startY: 395, endY: 395, box: false },
-            ///*onpop2*/  { startX: 1280, endX: 1325, startY: 390, endY: 310, box: false },
-            // /*onpop3*/ { startX: 1545, endX: 1590, startY: 390, endY: 340, box: false },
-            // /*onpop4*/ { startX: 1915, endX: 1940, startY: 390, endY: 340, box: false },
-            //  { startX: 4900, endX: 4990, startY: 390, endY: 365, box: false },
-            //  /*1*/ { startX: 545, endX: 560, startY: 325, endY: 302, box: true },
+            /*onpop2*/  { startX: 1280, endX: 1325, startY: 365, endY: 395, box: false },
+             /*onpop3*/ { startX: 1545, endX: 1590, startY: 330, endY: 395, box: false },
+             /*onpop4*/ { startX: 1915, endX: 1940, startY: 330, endY: 395, box: false },
+            //  { startX: 4900, endX: 4990, startY: 395, endY: 365, box: false },
+              /*1*/ { startX: 545, endX: 560, startY: 325, endY: 302, box: true },
             // /*2*/ { startX: 650, endX: 759, startY: 285, endY: 210, box: true },
-            // /*tall1*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: true },
+             /*tall1*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: true },
+              /*tall2*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: true },
         ];
     }
 
@@ -254,68 +255,35 @@ class Map {
                 left: blok.startX,
                 right: blok.endX
             };
-
-            /* if (
-                 playerBox.top <= blokBox.bottom &&
-                 playerBox.top >= blokBox.bottom - 10 &&
-                 playerBox.right > blokBox.left &&
-                 playerBox.left < blokBox.right &&
-                 this.player.velocityY < 0 &&
-                 blok.box
-             ) {
-                 console.log("Hit box block!");
-                 blok.box = false;
-                 
-             }*/
-
-
+        
             if (
-                this.player.moveright &&
-                playerBox.bottom <= blokBox.top &&
-                playerBox.right > blokBox.left &&
+                this.player.velocityY < 0 && 
+                playerBox.bottom > blokBox.bottom &&
+                playerBox.top < blokBox.bottom && 
+                playerBox.right > blokBox.left && 
                 playerBox.left < blokBox.right
-
             ) {
+                if (blok.box) {
+                    blok.box = false;
+                   
+                }
+                this.positionX = blokBox.left;
+                this.positionY = blokBox.top;
+                this.player.fulling = true;
+            }
+            
+        
+            if (playerBox.bottom <= blokBox.top && playerBox.right > blokBox.left && playerBox.left < blokBox.right) {
                 this.player.ground = blokBox.top - this.player.height;
                 onBlock = true;
                 this.fulling = false;
             }
-            console.log(playerBox.bottom <= blokBox.top, playerBox.right > blokBox.left, playerBox.left < blokBox.right)
-            if (
-                !this.player.moveright &&
-                playerBox.bottom <= blokBox.top &&
-                playerBox.right > blokBox.left &&
-                playerBox.left < blokBox.right
-
-            ) {
-                this.player.ground = blokBox.top - this.player.height;
-                onBlock = true;
-                this.fulling = false;
-            }
-
-
-            if (
-                playerBox.bottom > blokBox.top &&
-                playerBox.top < blokBox.bottom &&
-                playerBox.right > blokBox.left &&
-                playerBox.left < blokBox.right
-
-            ) {
-                if (this.player.moveright) {
-                    this.player.positionX = blokBox.left - this.background.positionX - this.player.width;
-                }
-            }
-
-            if (
-                playerBox.bottom > blokBox.top &&
-                playerBox.top - 5 < blokBox.bottom &&
-                playerBox.right > blokBox.left &&
-                playerBox.left < blokBox.right
-
-            ) {
-                if (!this.player.moveright) {
-                    this.player.positionX = blokBox.right - this.background.positionX;
-                }
+        
+            if (playerBox.bottom > blokBox.top && playerBox.top < blokBox.bottom &&
+                playerBox.right > blokBox.left && playerBox.left < blokBox.right&&!this.player.isJumping) {
+                this.player.positionX = this.player.moveright 
+                    ? blokBox.left - this.background.positionX - this.player.width 
+                    : blokBox.right - this.background.positionX;
             }
         });
         
