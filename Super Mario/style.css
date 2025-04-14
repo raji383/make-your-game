@@ -5,7 +5,8 @@ body {
 }
 
 #game {
-  width: 900px;
+
+  width: 80vw;
   height: 500px;
   overflow: hidden;
   position: absolute;
@@ -40,7 +41,20 @@ body {
   border-radius: 8px;
   z-index: 10;
 }
-
+#win{
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 80px;
+  font-family: sans-serif;
+  color: white;
+  background: rgba(0,0,0,0.5);
+  padding: 8px 16px;
+  border-radius: 8px;
+  z-index: 10;
+}
 #player {
   width: 50px;
   height: 70px;
