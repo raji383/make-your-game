@@ -6,8 +6,8 @@ const over = document.getElementById('gameover')
 const win = document.getElementById('win')
 
 class Background {
-    constructor(element,game) {
-        this.game=game;
+    constructor(element, game) {
+        this.game = game;
         this.element = element;
         this.positionX = 0;
         this.speed = 0;
@@ -18,8 +18,8 @@ class Background {
         this.positionX += this.speed;
         if (this.positionX >= this.maxScroll) {
             this.positionX = this.maxScroll;
-            this.game.gameOver=true
-            this.game.win=true
+            this.game.gameOver = true
+            this.game.win = true
         }
         if (this.positionX < 0) {
             this.positionX = 0;
@@ -55,10 +55,6 @@ class Player {
 
         this.moveright = false;
         if (!this.isJumping) {
-
-            this.positionY = this.ground;
-
-
             this.marioim.style.top = '0';
         }
 
@@ -88,9 +84,6 @@ class Player {
         this.moveright = true;
 
         if (!this.isJumping) {
-
-            this.positionY = this.ground;
-
             this.marioim.style.top = '-650%';
         }
 
@@ -233,7 +226,7 @@ class Map {
             { startX: 4740, endX: 4755, startY: 395, endY: 395, box: false },
             { startX: 4710, endX: 4725, startY: 360, endY: 395, box: false },
             //draj3
-            { startX: 4953, endX:4960, startY: 425, endY: 395, box: false },
+            { startX: 4953, endX: 4960, startY: 425, endY: 395, box: false },
             { startX: 4993, endX: 5010, startY: 390, endY: 395, box: false },
             { startX: 5023, endX: 5050, startY: 355, endY: 395, box: false },
             { startX: 5063, endX: 5100, startY: 325, endY: 395, box: false },
@@ -346,26 +339,21 @@ class Map {
 
 
         if (!onBlock) {
-
-            if (!this.player.moveright && !this.player.isJumping) {
-                this.player.positionY = this.player.ground + 5
-            }
             this.player.ground = 390;
-
         }
     }
 }
 
 class Game {
     constructor() {
-        this.background = new Background(back,this);
+        this.background = new Background(back, this);
         this.player = new Player(mario, this, marioim);
         this.input = new Input(this);
         this.map = new Map(this, this.background, this.player)
         this.score = 0;
         this.fulling = false;
         this.gameOver = false;
-        this.win=false
+        this.win = false
     }
 
     updateInput(deltaTime) {
@@ -377,7 +365,7 @@ class Game {
     }
 
     draw(deltaTime) {
-        
+
         this.updateInput(deltaTime);
         this.background.draw();
         this.player.draw();
@@ -402,10 +390,10 @@ function animation(timeStamp) {
     } else {
         if (game.win) {
             win.style.display = 'block'
-        }else{
+        } else {
             over.style.display = 'block'
         }
-        
+
     }
 
 }
