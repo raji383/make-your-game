@@ -5,6 +5,39 @@ const coinEl = document.getElementById('coin');
 const over = document.getElementById('gameover')
 const win = document.getElementById('win')
 
+class Coin {
+    constructor(element, game) {
+        this.element = element;
+        this.game = game;
+        this.collected = false;
+        this.positionX = 1000;
+        this.positionY = 395;
+    }
+
+    checkCollision() {
+        const player = this.game.player;
+        const distance = Math.abs((this.positionX - this.game.background.positionX) - player.positionX);
+        if (distance < 40 && !this.collected) {
+            this.collect();
+        }
+    }
+
+    collect() {
+        this.collected = true;
+        this.element.style.display = "none";
+        this.game.score++;
+        document.getElementById("score").textContent = `Score: ${this.game.score}`;
+    }
+
+    draw() {
+        if (!this.collected) {
+            const offset = this.positionX - this.game.background.positionX;
+            this.element.style.left = `${offset}px`;
+            this.element.style.top = `${this.positionY}px`;
+        }
+    }
+}
+
 class Background {
     constructor(element, game) {
         this.game = game;
@@ -248,24 +281,26 @@ class Map {
 
             ///solo bock
             /*1*/ { startX: 545, endX: 560, startY: 325, endY: 302, box: true },
-            /*2*/ { startX: 650, endX: 759, startY: 190, endY: 202, box: true },
-            /*3*/ { startX: 3100, endX: 3160, startY: 325, endY: 302, box: false },
-            /*4*/ { startX: 3530, endX: 3570, startY: 325, endY: 302, box: false },
-            /*5*/ { startX: 3640, endX: 3670, startY: 325, endY: 302, box: false },
-            /*5-2*/ { startX: 3640, endX: 3670, startY: 190, endY: 202, box: false },
-            /*6*/ { startX: 3740, endX: 3770, startY: 325, endY: 302, box: false },
-            /*7*/ { startX: 3930, endX: 3970, startY: 325, endY: 302, box: false },
+            /*2*/ { startX: 745, endX: 759, startY: 190, endY: 202, box: true },
+            /*3*/{ startX: 710, endX: 745, startY: 325, endY: 302, box: true },
+             /*4*/{ startX: 780, endX: 810, startY: 325, endY: 302, box: true },
+            /*3*/ { startX: 3100, endX: 3160, startY: 325, endY: 302, box: true },
+            /*4*/ { startX: 3530, endX: 3570, startY: 325, endY: 302, box: true },
+            /*5*/ { startX: 3640, endX: 3670, startY: 325, endY: 302, box: true },
+            /*5-2*/ { startX: 3640, endX: 3670, startY: 190, endY: 202, box: true },
+            /*6*/ { startX: 3740, endX: 3770, startY: 325, endY: 302, box: true },
+            /*7*/ { startX: 3930, endX: 3970, startY: 325, endY: 302, box: true },
 
             //till bolck
-            /*tall1*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: true },
-            /*tall2*/{ startX: 2570, endX: 2680, startY: 325, endY: 302, box: true },
-            /*tall3*/{ startX: 2680, endX: 2920, startY: 190, endY: 202, box: true },
-            /*tall3*/{ startX: 3060, endX: 3160, startY: 190, endY: 202, box: true },
-            /*tall3*/{ startX: 3340, endX: 3400, startY: 325, endY: 302, box: true },
-            /*tall4*/{ startX: 4020, endX: 4125, startY: 190, endY: 202, box: true },
-            /*tall5*/{ startX: 4270, endX: 4405, startY: 190, endY: 202, box: true },
-            /*tall5-2*/{ startX: 4320, endX: 4375, startY: 325, endY: 302, box: true },
-            /*tall6*/{ startX: 5600, endX: 5730, startY: 325, endY: 302, box: true },
+            /*tall1*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: false },
+            /*tall2*/{ startX: 2570, endX: 2580, startY: 325, endY: 302, box: false },
+            /*tall3*/{ startX: 2680, endX: 2920, startY: 190, endY: 202, box: false },
+            /*tall3*/{ startX: 3060, endX: 3160, startY: 190, endY: 202, box: false },
+            /*tall3*/{ startX: 3340, endX: 3400, startY: 325, endY: 302, box: false },
+            /*tall4*/{ startX: 4020, endX: 4125, startY: 190, endY: 202, box: false },
+            /*tall5*/{ startX: 4270, endX: 4405, startY: 190, endY: 202, box: false },
+            /*tall5-2*/{ startX: 4320, endX: 4375, startY: 325, endY: 302, box: false },
+            /*tall6*/{ startX: 5600, endX: 5730, startY: 325, endY: 302, box: false },
         ];
     }
 
@@ -314,23 +349,44 @@ class Map {
                 playerBox.left < blokBox.right
             ) {
                 if (blok.box) {
+                    this.game.coin.collect()
+                    const newDiv = document.createElement('div');
+                    newDiv.style.width =  '32px';
+                    newDiv.style.height = '32px';
+                    newDiv.style.backgroundImage="url('block.png')";
+                    newDiv.style.backgroundSize= 'cover';
+                    newDiv.style.position = 'absolute';
+                    newDiv.style.top = (blokBox.top-24) + 'px';
+                    newDiv.style.left = (blokBox.left-11) + 'px';
+                    newDiv.style.zIndex = "10";
+                    document.getElementById('background').appendChild(newDiv);
+
                     blok.box = false;
 
                 }
-                this.positionX = blokBox.left;
-                this.positionY = blokBox.top;
+                //this.player.positionX = blokBox.left;
+                this.player.positionY = blokBox.top + 100;
                 this.player.fulling = true;
             }
 
 
-            if (playerBox.bottom <= blokBox.top && playerBox.right > blokBox.left && playerBox.left < blokBox.right) {
+            if (
+                playerBox.bottom <= blokBox.top &&
+                playerBox.right > blokBox.left &&
+                playerBox.left < blokBox.right
+            ) {
                 this.player.ground = blokBox.top - this.player.height;
                 onBlock = true;
                 this.fulling = false;
             }
 
-            if (playerBox.bottom > blokBox.top && playerBox.top < blokBox.bottom &&
-                playerBox.right > blokBox.left && playerBox.left < blokBox.right && !this.player.isJumping) {
+            if (
+                playerBox.bottom > blokBox.top &&
+                playerBox.top < blokBox.bottom &&
+                playerBox.right > blokBox.left &&
+                playerBox.left < blokBox.right &&
+                !this.player.isJumping
+            ) {
                 this.player.positionX = this.player.moveright
                     ? blokBox.left - this.background.positionX - this.player.width
                     : blokBox.right - this.background.positionX;
@@ -349,6 +405,7 @@ class Game {
         this.background = new Background(back, this);
         this.player = new Player(mario, this, marioim);
         this.input = new Input(this);
+        this.coin = new Coin(coinEl, this)
         this.map = new Map(this, this.background, this.player)
         this.score = 0;
         this.fulling = false;
@@ -370,6 +427,7 @@ class Game {
         this.background.draw();
         this.player.draw();
         this.player.applyGravity(deltaTime);
+        this.coin.draw()
 
         this.map.update();
         if (this.player.positionY > 430) {
