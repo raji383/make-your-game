@@ -27,40 +27,63 @@ body {
   top: 0;
   left: 0;
 }
-#gameover{
+
+#gameover {
   display: none;
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   font-size: 80px;
   font-family: sans-serif;
   color: white;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   padding: 8px 16px;
   border-radius: 8px;
   z-index: 10;
 }
-#win{
+
+#win {
   display: none;
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   font-size: 80px;
   font-family: sans-serif;
   color: white;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   padding: 8px 16px;
   border-radius: 8px;
   z-index: 10;
 }
+
 #player {
   width: 50px;
   height: 70px;
   left: 20px;
   overflow: hidden;
   position: absolute;
+}
+
+#enmy {
+  width: 50px;
+  height: 50px;
+  left: -55px;
+  top: 390px;
+ 
+  overflow: hidden;
+  position: absolute;
+  z-index: 100;
+}
+#enmy-img {
+  width: 487px;
+  height: 580px;
+  background-image: url('enemies.png');
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #player-img {
@@ -72,6 +95,7 @@ body {
   top: -650%;
   left: 0;
 }
+
 #coin {
   position: absolute;
   width: 40px;
@@ -90,7 +114,7 @@ body {
   font-size: 24px;
   font-family: sans-serif;
   color: white;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   padding: 8px 16px;
   border-radius: 8px;
   z-index: 10;

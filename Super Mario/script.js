@@ -148,7 +148,7 @@ class Player {
             this.isJumping = true;
             this.velocityY = -this.jumpSpeed;
             this.positionY += this.velocityY;
-            console.log(this.velocityY, this.ground)
+           
             if (this.moveright) {
                 this.marioim.style.left = '-720%'
             } else {
@@ -357,8 +357,8 @@ class Map {
                     newDiv.style.backgroundImage = "url('block.png')";
                     newDiv.style.backgroundSize = 'cover';
                     newDiv.style.position = 'absolute';
-                    newDiv.style.top = (blokBox.top-24) + 'px';
-                    newDiv.style.left = (blokBox.left-11) + 'px';
+                    newDiv.style.top = (blokBox.top - 24) + 'px';
+                    newDiv.style.left = (blokBox.left - 11) + 'px';
                     newDiv.style.zIndex = "10";
                     document.getElementById('background').appendChild(newDiv);
                     blok.box = false;
@@ -378,8 +378,8 @@ class Map {
             ) {
                 this.player.ground = blokBox.top - this.player.height;
                 onBlock = true;
-               // this.player.isJumping = false;
-               // this.player.fulling = false;
+                // this.player.isJumping = false;
+                // this.player.fulling = false;
                 this.player.velocityY = 0;
             }
 
@@ -405,6 +405,65 @@ class Map {
         }
     }
 }
+class Enmy {
+    constructor(game, background, player) {
+        this.game = game;
+        this.background = background;
+        this.player = player;
+        this.enmy = document.getElementById('enmy');
+        this.positionX = 1000 - this.background.positionX;
+        this.positionY = 395;
+        this.speed = 5;
+    }
+    moveRight(deltaTime) {
+
+        this.enmy.style.left = `${this.positionX - this.background.positionX}px`;
+    }
+    moveLeft(deltaTime) {
+        this.enmy.style.left = `${this.positionX - this.background.positionX}px`;
+    }
+    checkCollision() {
+        const player = this.game.player;
+
+        const playerBox = {
+            top: player.positionY,
+            bottom: player.positionY + player.height,
+            left: player.positionX- this.background.positionX,
+            right: player.positionX + player.width
+        };
+
+        const enemyBox = {
+            top: this.positionY,
+            bottom: this.positionY + this.enmy.offsetHeight,
+            left: this.positionX,
+            right: this.positionX + this.enmy.offsetWidth
+        };
+   
+        
+        const isTopCollision =
+            playerBox.bottom >= enemyBox.top &&
+            playerBox.top < enemyBox.top &&
+            playerBox.right > enemyBox.left &&
+            playerBox.left < enemyBox.right;
+
+        const isSideCollision =
+            playerBox.right > enemyBox.left &&
+            playerBox.left < enemyBox.right &&
+            playerBox.bottom > enemyBox.top &&
+            playerBox.top < enemyBox.bottom;
+  
+        if (isTopCollision) {
+           
+            this.enmy.remove();
+            console.log("عدو مات 👟");
+        } else if (isSideCollision) {
+            
+            this.game.gameOver = true;
+            console.log("تصادم جانبي 😵");
+        }
+    }
+
+}
 
 class Game {
     constructor() {
@@ -412,6 +471,7 @@ class Game {
         this.player = new Player(mario, this, marioim);
         this.input = new Input(this);
         this.coin = new Coin(coinEl, this)
+        this.enmys = new Enmy(this, this.background, this.player)
         this.map = new Map(this, this.background, this.player)
         this.score = 0;
         this.fulling = false;
@@ -423,11 +483,14 @@ class Game {
         const keys = this.input.keys;
         if (keys.includes(' ')) this.player.jump(deltaTime);
         if (keys.includes('ArrowLeft')) this.player.moveLeft(deltaTime);
+        if (keys.includes('ArrowLeft')) this.enmys.moveLeft(deltaTime);
+        if (keys.includes('ArrowRight')) this.enmys.moveRight(deltaTime);
         if (keys.includes('ArrowRight')) this.player.moveRight(deltaTime);
 
     }
 
     draw(deltaTime) {
+        this.enmys.checkCollision();
 
         this.updateInput(deltaTime);
         this.background.draw();
@@ -448,7 +511,7 @@ function animation(timeStamp) {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
     game.draw(deltaTime);
-    console.log(game.win)
+   
     if (!game.gameOver) {
         requestAnimationFrame(animation);
     } else {
