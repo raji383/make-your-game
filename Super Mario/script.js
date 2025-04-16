@@ -341,27 +341,26 @@ class Map {
                 right: blok.endX
             };
 
+            // Bottom collision (hitting block from below)
             if (
                 this.player.velocityY < 0 &&
-                playerBox.bottom > blokBox.bottom &&
                 playerBox.top < blokBox.bottom &&
                 playerBox.bottom > blokBox.top &&
                 playerBox.right > blokBox.left &&
                 playerBox.left < blokBox.right
             ) {
                 if (blok.box) {
-                    this.game.coin.collect()
+                    this.game.coin.collect();
                     const newDiv = document.createElement('div');
-                    newDiv.style.width =  '32px';
+                    newDiv.style.width = '32px';
                     newDiv.style.height = '32px';
-                    newDiv.style.backgroundImage="url('block.png')";
-                    newDiv.style.backgroundSize= 'cover';
+                    newDiv.style.backgroundImage = "url('block.png')";
+                    newDiv.style.backgroundSize = 'cover';
                     newDiv.style.position = 'absolute';
                     newDiv.style.top = (blokBox.top-24) + 'px';
                     newDiv.style.left = (blokBox.left-11) + 'px';
                     newDiv.style.zIndex = "10";
                     document.getElementById('background').appendChild(newDiv);
-
                     blok.box = false;
                 }
                 this.player.velocityY = 0;
@@ -369,19 +368,24 @@ class Map {
                 this.player.isJumping = true;
             }
 
-
+            // Top collision (landing on block)
             if (
-                playerBox.bottom <= blokBox.top &&
+                playerBox.bottom >= blokBox.top &&
+                playerBox.bottom <= blokBox.top + 10 &&
                 playerBox.right > blokBox.left &&
-                playerBox.left < blokBox.right
+                playerBox.left < blokBox.right &&
+                this.player.velocityY >= 0
             ) {
                 this.player.ground = blokBox.top - this.player.height;
                 onBlock = true;
-                this.fulling = false;
+               // this.player.isJumping = false;
+               // this.player.fulling = false;
+                this.player.velocityY = 0;
             }
 
+            // Side collision
             if (
-                playerBox.bottom > blokBox.top &&
+                playerBox.bottom > blokBox.top + 10 &&
                 playerBox.top < blokBox.bottom &&
                 playerBox.right > blokBox.left &&
                 playerBox.left < blokBox.right &&
@@ -393,9 +397,11 @@ class Map {
             }
         });
 
-
-        if (!onBlock) {
+        if (!onBlock && this.player.positionY < 390) {
             this.player.ground = 390;
+            if (!this.player.isJumping) {
+                this.player.fulling = true;
+            }
         }
     }
 }
