@@ -345,6 +345,7 @@ class Map {
                 this.player.velocityY < 0 &&
                 playerBox.bottom > blokBox.bottom &&
                 playerBox.top < blokBox.bottom &&
+                playerBox.bottom > blokBox.top &&
                 playerBox.right > blokBox.left &&
                 playerBox.left < blokBox.right
             ) {
@@ -362,11 +363,10 @@ class Map {
                     document.getElementById('background').appendChild(newDiv);
 
                     blok.box = false;
-
                 }
-                //this.player.positionX = blokBox.left;
-                this.player.positionY = blokBox.top + 100;
-                this.player.fulling = true;
+                this.player.velocityY = 0;
+                this.player.positionY = blokBox.bottom;
+                this.player.isJumping = true;
             }
 
 
