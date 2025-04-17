@@ -85,13 +85,16 @@ class Player {
         this.moveright = true;
         this.fulling = false
         this.next = false
+        this.pass= false
 
     }
     moveDown() {
-        console.log(this.next)
+       
         if (
             this.next
         ) {
+            this.pass = true
+           
             this.positionX =350;
             this.positionY = 0;
             this.game.background.positionY = 100;
@@ -410,6 +413,7 @@ class Map {
 
             // Side collision
             if (
+                !this.player.pass &&
                 playerBox.bottom > blokBox.top + 10 &&
                 playerBox.top < blokBox.bottom &&
                 playerBox.right > blokBox.left &&
@@ -421,6 +425,38 @@ class Map {
                     : blokBox.right - this.background.positionX;
             }
         });
+
+        // Special pipe collision handling
+        if (this.player.pass) {
+            const pipeBox = {
+                top: 360,
+                bottom: 400,
+                left: 1735,
+                right: 1940
+            };
+
+            // Side collision with pipe
+            if (playerBox.bottom > pipeBox.top &&
+                playerBox.top < pipeBox.bottom &&
+                playerBox.right > pipeBox.left &&
+                playerBox.left < pipeBox.right &&
+                !this.player.isJumping) {
+                this.player.positionX = this.player.moveright
+                    ? pipeBox.left - this.background.positionX - this.player.width
+                    : pipeBox.right - this.background.positionX;
+            }
+
+            // Top collision with pipe
+            if (playerBox.bottom >= pipeBox.top &&
+                playerBox.bottom <= pipeBox.bottom &&
+                playerBox.right > pipeBox.left &&
+                playerBox.left < pipeBox.right &&
+                this.player.velocityY >= 0) {
+                this.player.ground = pipeBox.top - this.player.height;
+                onBlock = true;
+                this.player.velocityY = 0;
+            }
+        }
 
         if (!onBlock && this.player.positionY < 390) {
             this.player.ground = 390;
@@ -607,12 +643,14 @@ class Enmy {
             enemyBox.top < playerBox.bottom &&
             playerBox.right > enemyBox.left &&
             playerBox.left < enemyBox.right &&
-            this.enmyDed == false
+            this.enmyDed == false&&
+            !this.game.player.next
         ) {
 
             this.game.gameOver = true;
 
         }
+        console.log(this.game.player.next)
     }
 
 }
