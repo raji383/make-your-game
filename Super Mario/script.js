@@ -1,6 +1,7 @@
 const back = document.getElementById('background');
 const mario = document.getElementById('player');
 const marioim = document.getElementById('player-img');
+const enmys = document.getElementById('enmy-img');
 const coinEl = document.getElementById('coin');
 const over = document.getElementById('gameover')
 const win = document.getElementById('win')
@@ -148,7 +149,7 @@ class Player {
             this.isJumping = true;
             this.velocityY = -this.jumpSpeed;
             this.positionY += this.velocityY;
-           
+
             if (this.moveright) {
                 this.marioim.style.left = '-720%'
             } else {
@@ -418,18 +419,34 @@ class Enmy {
         this.player = player;
         this.enmy = document.getElementById('enmy');
         this.positionX = 1000 - this.background.positionX;
-        this.positionY = 395;
-        this.speed = 5;
+        this.positionY = 390;
+        this.speed = 2;
         this.velocityY = 0;
         this.gravity = 0.5;
+        this.frameTimer = 0;
+        this.frameInterval = 1000;
+        this.frameX = 0;
+        this.enmyDed = false;
     }
 
-    enmyMove() {
-       
-        this.velocityY += this.gravity;
-        this.positionY += this.velocityY;
+    enmyMove(deltaTime) {
+
+        //this.velocityY += this.gravity;
+        //this.positionY += this.velocityY;
 
         this.positionX -= this.speed;
+       
+            this.frameTimer += deltaTime;
+            if (this.frameTimer >= this.frameInterval) {
+                this.frameTimer = 0;
+                if (this.frameX >= 170) {
+                    this.frameX = 0;
+                } else {
+                    this.frameX += 170;
+                }
+            }
+            enmys.style.left = `-${this.frameX}%`;
+        
 
         this.checkObstacles();
 
@@ -438,7 +455,7 @@ class Enmy {
     }
 
     checkObstacles() {
-       
+
         const enmyBox = {
             top: this.positionY,
             bottom: this.positionY + 50,
@@ -457,7 +474,7 @@ class Enmy {
                 right: blok.endX
             };
 
-            
+
             if (
                 enmyBox.bottom >= blokBox.top &&
                 enmyBox.bottom <= blokBox.top + 10 &&
@@ -470,66 +487,69 @@ class Enmy {
                 onBlock = true;
             }
 
-         
+
             if (
+                enmyBox.bottom > blokBox.top &&
+                enmyBox.top < blokBox.bottom &&
                 enmyBox.right > blokBox.left &&
                 enmyBox.left < blokBox.right
             ) {
-               
-                this.positionX += this.speed;
-            }else{
-                this.positionX -= this.speed;
+
+                this.speed = -this.speed;
             }
         });
 
-       
+
         if (!onBlock && this.positionY < 395) {
             this.velocityY += this.gravity;
         } else if (this.positionY >= 395) {
             this.velocityY = 0;
             this.positionY = 395;
-    }
+        }
     }
 
-    checkCollision() {
-        this.enmyMove();
+    checkCollision(deltaTime) {
+        this.enmyMove(deltaTime);
         const player = this.game.player;
 
         const playerBox = {
             top: player.positionY,
             bottom: player.positionY + player.height,
-            left: player.positionX- this.background.positionX,
-            right: player.positionX + player.width
+            left: player.positionX + this.background.positionX,
+            right: player.positionX + player.width+this.background.positionX    
         };
 
         const enemyBox = {
-            top: this.positionY,
-            bottom: this.positionY + this.enmy.offsetHeight,
+            top: this.positionY+15,
+            bottom: this.positionY + 46,
             left: this.positionX,
-            right: this.positionX + this.enmy.offsetWidth
+            right: this.positionX +30
         };
-   
-        
-        const isTopCollision =
-            playerBox.bottom >= enemyBox.top &&
-            playerBox.top < enemyBox.top &&
-            playerBox.right > enemyBox.left &&
-            playerBox.left < enemyBox.right;
 
-        const isSideCollision =
+
+        
+console.log(   playerBox);
+        if (
+            (this.game.player.isJumping || this.game.player.fulling) &&
+            playerBox.bottom >= enemyBox.top &&
             playerBox.right > enemyBox.left &&
-            playerBox.left < enemyBox.right &&
-            playerBox.bottom > enemyBox.top &&
-            playerBox.top < enemyBox.bottom;
-  
-        if (isTopCollision) {
-           
+            playerBox.left < enemyBox.right
+           ) {
+                this.game.score++;
+                this.enmyDed = true;
             this.enmy.remove();
-            console.log("عدو مات 👟");
-        } else if (isSideCollision) {
             
+        } else if (
+            !this.game.player.fulling&&
+            enemyBox.bottom > playerBox.top &&
+            enemyBox.top < playerBox.bottom &&            
+            playerBox.right > enemyBox.left &&
+            playerBox.left < enemyBox.right&&
+            this.enmyDed == false
+        ) {
+
             this.game.gameOver = true;
-            console.log("تصادم جانبي 😵");
+          
         }
     }
 
@@ -553,14 +573,12 @@ class Game {
         const keys = this.input.keys;
         if (keys.includes(' ')) this.player.jump(deltaTime);
         if (keys.includes('ArrowLeft')) this.player.moveLeft(deltaTime);
-        if (keys.includes('ArrowLeft')) this.enmys.moveLeft(deltaTime);
-        if (keys.includes('ArrowRight')) this.enmys.moveRight(deltaTime);
         if (keys.includes('ArrowRight')) this.player.moveRight(deltaTime);
 
     }
 
     draw(deltaTime) {
-        this.enmys.checkCollision();
+        this.enmys.checkCollision(deltaTime);
 
         this.updateInput(deltaTime);
         this.background.draw();
@@ -581,7 +599,7 @@ function animation(timeStamp) {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
     game.draw(deltaTime);
-   
+
     if (!game.gameOver) {
         requestAnimationFrame(animation);
     } else {
