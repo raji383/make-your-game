@@ -82,9 +82,18 @@ class Player {
         this.velocityY = 0;
         this.moveright = true;
         this.fulling = false
+        this.next = false
 
     }
+    moveDown() {
+        console.log(this.next)
+        if (
+            this.next
+        ) {
+            this.positionX = this.game.map.bloks[2].startX - this.game.background.positionX;
 
+        }
+    }
     moveLeft(deltaTime) {
 
         this.moveright = false;
@@ -209,12 +218,12 @@ class Input {
         this.game = game;
         this.keys = [];
         window.addEventListener('keydown', e => {
-            if (['ArrowLeft', 'ArrowRight', ' ', 'p'].includes(e.key) && !this.keys.includes(e.key)) {
+            if (['ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'p'].includes(e.key) && !this.keys.includes(e.key)) {
                 this.keys.push(e.key);
             }
         });
         window.addEventListener('keyup', e => {
-            if (['ArrowLeft', 'ArrowRight', ' ', 'p'].includes(e.key)) {
+            if (['ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'p'].includes(e.key)) {
                 this.keys.splice(this.keys.indexOf(e.key), 1);
                 if (this.game.player.moveright) {
                     this.game.player.marioim.style.left = '0'
@@ -240,74 +249,74 @@ class Map {
 
         this.bloks = [
             ///anabib
-            /*onpop1*/ { startX: 930, endX: 990, startY: 395, endY: 395, box: false },
-            /*onpop2*/ { startX: 1280, endX: 1325, startY: 365, endY: 395, box: false },
-            /*onpop3*/ { startX: 1545, endX: 1590, startY: 330, endY: 395, box: false },
-            /*onpop4*/ { startX: 1915, endX: 1940, startY: 330, endY: 395, box: false },
-            /*onpop4*/ { startX: 5450, endX: 5500, startY: 395, endY: 395, box: false },
-            /*onpop4*/ { startX: 5975, endX: 6020, startY: 395, endY: 395, box: false },
+            /*onpop1*/ { startX: 930, endX: 990, startY: 395, endY: 395, box: false, x: false },
+            /*onpop2*/ { startX: 1280, endX: 1325, startY: 365, endY: 395, box: false, x: false },
+            /*onpop3*/ { startX: 1545, endX: 1590, startY: 330, endY: 395, box: false, x: false },
+            /*onpop4*/ { startX: 1915, endX: 1940, startY: 330, endY: 395, box: false, x: true },
+            /*onpop4*/ { startX: 5450, endX: 5500, startY: 395, endY: 395, box: false, x: false },
+            /*onpop4*/ { startX: 5975, endX: 6020, startY: 395, endY: 395, box: false, x: false },
 
 
             ////daraj
             //draj1
-            { startX: 4480, endX: 4490, startY: 425, endY: 395, box: false },
-            { startX: 4520, endX: 4540, startY: 390, endY: 395, box: false },
-            { startX: 4550, endX: 4580, startY: 355, endY: 395, box: false },
-            { startX: 4590, endX: 4600, startY: 325, endY: 395, box: false },
+            { startX: 4480, endX: 4490, startY: 425, endY: 395, box: false, x: false },
+            { startX: 4520, endX: 4540, startY: 390, endY: 395, box: false, x: false },
+            { startX: 4550, endX: 4580, startY: 355, endY: 395, box: false, x: false },
+            { startX: 4590, endX: 4600, startY: 325, endY: 395, box: false, x: false },
             //draj2
-            { startX: 4680, endX: 4695, startY: 330, endY: 395, box: false },
-            { startX: 4770, endX: 4785, startY: 430, endY: 395, box: false },
-            { startX: 4740, endX: 4755, startY: 395, endY: 395, box: false },
-            { startX: 4710, endX: 4725, startY: 360, endY: 395, box: false },
+            { startX: 4680, endX: 4695, startY: 330, endY: 395, box: false, x: false },
+            { startX: 4770, endX: 4785, startY: 430, endY: 395, box: false, x: false },
+            { startX: 4740, endX: 4755, startY: 395, endY: 395, box: false, x: false },
+            { startX: 4710, endX: 4725, startY: 360, endY: 395, box: false, x: false },
             //draj3
-            { startX: 4953, endX: 4960, startY: 425, endY: 395, box: false },
-            { startX: 4993, endX: 5010, startY: 390, endY: 395, box: false },
-            { startX: 5023, endX: 5050, startY: 355, endY: 395, box: false },
-            { startX: 5063, endX: 5100, startY: 325, endY: 395, box: false },
+            { startX: 4953, endX: 4960, startY: 425, endY: 395, box: false, x: false },
+            { startX: 4993, endX: 5010, startY: 390, endY: 395, box: false, x: false },
+            { startX: 5023, endX: 5050, startY: 355, endY: 395, box: false, x: false },
+            { startX: 5063, endX: 5100, startY: 325, endY: 395, box: false, x: false },
             //draj4
-            { startX: 5270, endX: 5285, startY: 430, endY: 395, box: false },
-            { startX: 5240, endX: 5255, startY: 395, endY: 395, box: false },
-            { startX: 5210, endX: 5225, startY: 360, endY: 395, box: false },
-            { startX: 5180, endX: 5195, startY: 330, endY: 395, box: false },
+            { startX: 5270, endX: 5285, startY: 430, endY: 395, box: false, x: false },
+            { startX: 5240, endX: 5255, startY: 395, endY: 395, box: false, x: false },
+            { startX: 5210, endX: 5225, startY: 360, endY: 395, box: false, x: false },
+            { startX: 5180, endX: 5195, startY: 330, endY: 395, box: false, x: false },
             //darj final
-            { startX: 6030, endX: 6050, startY: 425, endY: 395, box: false },
-            { startX: 6080, endX: 6100, startY: 390, endY: 395, box: false },
-            { startX: 6110, endX: 6140, startY: 355, endY: 395, box: false },
-            { startX: 6150, endX: 6170, startY: 325, endY: 395, box: false },
-            { startX: 6180, endX: 6200, startY: 290, endY: 395, box: false },
-            { startX: 6210, endX: 6230, startY: 255, endY: 395, box: false },
-            { startX: 6240, endX: 6270, startY: 225, endY: 395, box: false },
-            { startX: 6280, endX: 6330, startY: 190, endY: 395, box: false },
+            { startX: 6030, endX: 6050, startY: 425, endY: 395, box: false, x: false },
+            { startX: 6080, endX: 6100, startY: 390, endY: 395, box: false, x: false },
+            { startX: 6110, endX: 6140, startY: 355, endY: 395, box: false, x: false },
+            { startX: 6150, endX: 6170, startY: 325, endY: 395, box: false, x: false },
+            { startX: 6180, endX: 6200, startY: 290, endY: 395, box: false, x: false },
+            { startX: 6210, endX: 6230, startY: 255, endY: 395, box: false, x: false },
+            { startX: 6240, endX: 6270, startY: 225, endY: 395, box: false, x: false },
+            { startX: 6280, endX: 6330, startY: 190, endY: 395, box: false, x: false },
 
 
             ///solo bock
-            /*1*/ { startX: 545, endX: 560, startY: 325, endY: 302, box: true },
-            /*2*/ { startX: 745, endX: 759, startY: 190, endY: 202, box: true },
-            /*3*/{ startX: 710, endX: 745, startY: 325, endY: 302, box: true },
-             /*4*/{ startX: 780, endX: 810, startY: 325, endY: 302, box: true },
-              /*3*/{ startX: 2613, endX: 2628, startY: 325, endY: 302, box: true },
-              /*3*/{ startX: 3145, endX: 3160, startY: 190, endY: 202, box: true },
-            /*3*/ { startX: 3145, endX: 3160, startY: 325, endY: 302, box: false },
-            /*4*/ { startX: 3545, endX: 3570, startY: 325, endY: 302, box: true },
-            /*5*/ { startX: 3645, endX: 3670, startY: 325, endY: 302, box: true },
-            /*5-2*/ { startX: 3645, endX: 3670, startY: 190, endY: 202, box: true },
-            /*6*/ { startX: 3745, endX: 3770, startY: 325, endY: 302, box: true },
-            /*7*/ { startX: 3930, endX: 3970, startY: 325, endY: 302, box: false },
-            /*8*/{ startX: 4315, endX: 4335, startY: 190, endY: 202, box: true },
-            /*9*/{ startX: 4348, endX: 4363, startY: 190, endY: 202, box: true },
-            /*10*/{ startX: 5680, endX: 5700, startY: 325, endY: 302, box: true },
+            /*1*/ { startX: 545, endX: 560, startY: 325, endY: 302, box: true, x: false },
+            /*2*/ { startX: 745, endX: 759, startY: 190, endY: 202, box: true, x: false },
+            /*3*/{ startX: 710, endX: 745, startY: 325, endY: 302, box: true, x: false },
+             /*4*/{ startX: 780, endX: 810, startY: 325, endY: 302, box: true, x: false },
+              /*3*/{ startX: 2613, endX: 2628, startY: 325, endY: 302, box: true, x: false },
+              /*3*/{ startX: 3145, endX: 3160, startY: 190, endY: 202, box: true, x: false },
+            /*3*/ { startX: 3145, endX: 3160, startY: 325, endY: 302, box: false, x: false },
+            /*4*/ { startX: 3545, endX: 3570, startY: 325, endY: 302, box: true, x: false },
+            /*5*/ { startX: 3645, endX: 3670, startY: 325, endY: 302, box: true, x: false },
+            /*5-2*/ { startX: 3645, endX: 3670, startY: 190, endY: 202, box: true, x: false },
+            /*6*/ { startX: 3745, endX: 3770, startY: 325, endY: 302, box: true, x: false },
+            /*7*/ { startX: 3930, endX: 3970, startY: 325, endY: 302, box: false, x: false },
+            /*8*/{ startX: 4315, endX: 4335, startY: 190, endY: 202, box: true, x: false },
+            /*9*/{ startX: 4348, endX: 4363, startY: 190, endY: 202, box: true, x: false },
+            /*10*/{ startX: 5680, endX: 5700, startY: 325, endY: 302, box: true, x: false },
 
 
             //till bolck
-            /*tall1*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: false },
-            /*tall2*/{ startX: 2570, endX: 2670, startY: 325, endY: 302, box: false },
-            /*tall3*/{ startX: 2680, endX: 2920, startY: 190, endY: 202, box: false },
-            /*tall3*/{ startX: 3060, endX: 3160, startY: 190, endY: 202, box: false },
-            /*tall3*/{ startX: 3340, endX: 3400, startY: 325, endY: 302, box: false },
-            /*tall4*/{ startX: 4020, endX: 4125, startY: 190, endY: 202, box: false },
-            /*tall5*/{ startX: 4270, endX: 4405, startY: 190, endY: 202, box: false },
-            /*tall5-2*/{ startX: 4320, endX: 4375, startY: 325, endY: 302, box: false },
-            /*tall6*/{ startX: 5600, endX: 5730, startY: 325, endY: 302, box: false },
+            /*tall1*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: false, x: false },
+            /*tall2*/{ startX: 2570, endX: 2670, startY: 325, endY: 302, box: false, x: false },
+            /*tall3*/{ startX: 2680, endX: 2920, startY: 190, endY: 202, box: false, x: false },
+            /*tall3*/{ startX: 3060, endX: 3160, startY: 190, endY: 202, box: false, x: false },
+            /*tall3*/{ startX: 3340, endX: 3400, startY: 325, endY: 302, box: false, x: false },
+            /*tall4*/{ startX: 4020, endX: 4125, startY: 190, endY: 202, box: false, x: false },
+            /*tall5*/{ startX: 4270, endX: 4405, startY: 190, endY: 202, box: false, x: false },
+            /*tall5-2*/{ startX: 4320, endX: 4375, startY: 325, endY: 302, box: false, x: false },
+            /*tall6*/{ startX: 5600, endX: 5730, startY: 325, endY: 302, box: false, x: false },
         ];
     }
 
@@ -383,6 +392,11 @@ class Map {
                 playerBox.left < blokBox.right &&
                 this.player.velocityY >= 0
             ) {
+                console.log(blok.box)
+                if (blok.x) {
+                    this.player.next = true;
+
+                }
                 this.player.ground = blokBox.top - this.player.height;
                 onBlock = true;
                 // this.player.isJumping = false;
@@ -502,7 +516,7 @@ class Enmy {
                         setTimeout(() => this.enmy.remove(), 500);
                     }
                 }*/
-                 this.speed = -this.speed;
+                this.speed = -this.speed;
             }
         });
 
@@ -565,14 +579,15 @@ class Enmy {
 
 
 
-        console.log(playerBox);
         if (
             (this.game.player.isJumping || this.game.player.fulling) &&
             playerBox.bottom >= enemyBox.top &&
             playerBox.right > enemyBox.left &&
-            playerBox.left < enemyBox.right
+            playerBox.left < enemyBox.right &&
+            !this.enmyDed
         ) {
             this.game.score++;
+            this.game.coin.collect();
             this.enmyDed = true;
             this.enmyImg.style.left = '-250%';
             this.game.player.velocityY = -5;
@@ -629,6 +644,7 @@ class Game {
         if (keys.includes(' ')) this.player.jump(deltaTime);
         if (keys.includes('ArrowLeft')) this.player.moveLeft(deltaTime);
         if (keys.includes('ArrowRight')) this.player.moveRight(deltaTime);
+        if (keys.includes('ArrowDown')) this.player.moveDown();
 
     }
 
