@@ -284,12 +284,18 @@ class Map {
             /*2*/ { startX: 745, endX: 759, startY: 190, endY: 202, box: true },
             /*3*/{ startX: 710, endX: 745, startY: 325, endY: 302, box: true },
              /*4*/{ startX: 780, endX: 810, startY: 325, endY: 302, box: true },
+              /*3*/{ startX: 2613, endX: 2628, startY: 325, endY: 302, box: true },
+              /*3*/{ startX: 3145, endX: 3160, startY: 190, endY: 202, box: true },
             /*3*/ { startX: 3145, endX: 3160, startY: 325, endY: 302, box: false },
             /*4*/ { startX: 3545, endX: 3570, startY: 325, endY: 302, box: true },
             /*5*/ { startX: 3645, endX: 3670, startY: 325, endY: 302, box: true },
             /*5-2*/ { startX: 3645, endX: 3670, startY: 190, endY: 202, box: true },
             /*6*/ { startX: 3745, endX: 3770, startY: 325, endY: 302, box: true },
             /*7*/ { startX: 3930, endX: 3970, startY: 325, endY: 302, box: false },
+            /*8*/{ startX: 4315, endX: 4335, startY: 190, endY: 202, box: true },
+            /*9*/{ startX: 4348, endX: 4363, startY: 190, endY: 202, box: true },
+            /*10*/{ startX: 5680, endX: 5700, startY: 325, endY: 302, box: true },
+
 
             //till bolck
             /*tall1*/{ startX: 680, endX: 840, startY: 325, endY: 302, box: false },
@@ -414,15 +420,79 @@ class Enmy {
         this.positionX = 1000 - this.background.positionX;
         this.positionY = 395;
         this.speed = 5;
+        this.velocityY = 0;
+        this.gravity = 0.5;
     }
-    moveRight(deltaTime) {
+
+    enmyMove() {
+       
+        this.velocityY += this.gravity;
+        this.positionY += this.velocityY;
+
+        this.positionX -= this.speed;
+
+        this.checkObstacles();
 
         this.enmy.style.left = `${this.positionX - this.background.positionX}px`;
+        this.enmy.style.top = `${this.positionY}px`;
     }
-    moveLeft(deltaTime) {
-        this.enmy.style.left = `${this.positionX - this.background.positionX}px`;
+
+    checkObstacles() {
+       
+        const enmyBox = {
+            top: this.positionY,
+            bottom: this.positionY + 50,
+            left: this.positionX,
+            right: this.positionX + 50
+        };
+
+        const bloks = this.game.map.bloks;
+        let onBlock = false;
+
+        bloks.forEach(blok => {
+            const blokBox = {
+                top: blok.startY,
+                bottom: blok.endY,
+                left: blok.startX,
+                right: blok.endX
+            };
+
+            
+            if (
+                enmyBox.bottom >= blokBox.top &&
+                enmyBox.bottom <= blokBox.top + 10 &&
+                enmyBox.right > blokBox.left &&
+                enmyBox.left < blokBox.right &&
+                this.velocityY >= 0
+            ) {
+                this.positionY = blokBox.top - this.enmy.offsetHeight;
+                this.velocityY = 0;
+                onBlock = true;
+            }
+
+         
+            if (
+                enmyBox.right > blokBox.left &&
+                enmyBox.left < blokBox.right
+            ) {
+               
+                this.positionX += this.speed;
+            }else{
+                this.positionX -= this.speed;
+            }
+        });
+
+       
+        if (!onBlock && this.positionY < 395) {
+            this.velocityY += this.gravity;
+        } else if (this.positionY >= 395) {
+            this.velocityY = 0;
+            this.positionY = 395;
     }
+    }
+
     checkCollision() {
+        this.enmyMove();
         const player = this.game.player;
 
         const playerBox = {
