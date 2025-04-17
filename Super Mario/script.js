@@ -44,6 +44,7 @@ class Background {
         this.game = game;
         this.element = element;
         this.positionX = 0;
+        this.positionY = 0;
         this.speed = 0;
         this.maxScroll = 7038 - 900;
     }
@@ -59,6 +60,7 @@ class Background {
             this.positionX = 0;
         }
         this.element.style.left = `-${this.positionX}px`;
+       this.element.style.top = `-${this.positionY}%`;
     }
 }
 
@@ -90,7 +92,9 @@ class Player {
         if (
             this.next
         ) {
-            this.positionX = this.game.map.bloks[2].startX - this.game.background.positionX;
+            this.positionX =350;
+            this.positionY = 0;
+            this.game.background.positionY = 100;
 
         }
     }
