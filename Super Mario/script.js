@@ -420,8 +420,7 @@ class Enmy {
         this.positionX = startX - this.background.positionX;
         this.positionY = 390;
         this.speed = 2;
-        this.velocityY = 0;
-        this.gravity = 0.5;
+
         this.frameTimer = 0;
         this.frameInterval = 1000;
         this.frameX = 0;
@@ -435,8 +434,27 @@ class Enmy {
         this.enmy.appendChild(this.enmyImg);
         document.getElementById('background').appendChild(this.enmy);
     }
+    enmysfulling() {
+        this.game.map.holes.forEach(hole => {
+            if (
+                this.positionY >= 390 &&
+                this.positionX > hole.startX &&
+                this.positionX + 50 < hole.endX &&
+                !this.player.isJumping
+            ) {
+                /*if (this.positionY < hole.yPosition) {
+                    this.enmy.remove();
+                }
+                this.positionY += this.speed;*/
+                this.speed = -this.speed;
 
+
+            }
+        });
+    }
     enmyMove(deltaTime) {
+        //this.enmysfulling()
+
         this.positionX -= this.speed;
 
         this.frameTimer += deltaTime;
@@ -451,17 +469,16 @@ class Enmy {
         this.enmyImg.style.left = `-${this.frameX}%`;
         if (this.enmyDed) {
             this.enmyImg.style.left = '-250%';
-            
+
         }
 
         this.checkObstacles();
 
-        this.enmy.style.left = `${this.positionX }px`;
+        this.enmy.style.left = `${this.positionX}px`;
         this.enmy.style.top = `${this.positionY}px`;
     }
 
     checkObstacles() {
-
         const enmyBox = {
             top: this.positionY,
             bottom: this.positionY + 50,
@@ -469,6 +486,29 @@ class Enmy {
             right: this.positionX + 50
         };
 
+        // Check for holes first
+        const holes = this.game.map.holes;
+        let inHole = false;
+
+        holes.forEach(hole => {
+            if (enmyBox.left + 50 > hole.startX && enmyBox.right < hole.endX) {
+                inHole = true;
+                /*if (this.positionY < hole.yPosition) {
+                    this.positionY += 8;  // Faster falling speed
+                    if (this.positionY >= hole.yPosition - 50) {
+                        this.enmyDed = true;
+                        this.enmy.style.transition = 'opacity 0.5s';
+                        this.enmy.style.opacity = '0';
+                        setTimeout(() => this.enmy.remove(), 500);
+                    }
+                }*/
+                 this.speed = -this.speed;
+            }
+        });
+
+        if (inHole) return;
+
+        // Check block collisions
         const bloks = this.game.map.bloks;
         let onBlock = false;
 
@@ -480,19 +520,15 @@ class Enmy {
                 right: blok.endX
             };
 
-
             if (
                 enmyBox.bottom >= blokBox.top &&
                 enmyBox.bottom <= blokBox.top + 10 &&
                 enmyBox.right > blokBox.left &&
-                enmyBox.left < blokBox.right &&
-                this.velocityY >= 0
+                enmyBox.left < blokBox.right
             ) {
-                this.positionY = blokBox.top - this.enmy.offsetHeight;
-                this.velocityY = 0;
+                this.positionY = blokBox.top - 50;
                 onBlock = true;
             }
-
 
             if (
                 enmyBox.bottom > blokBox.top &&
@@ -500,17 +536,12 @@ class Enmy {
                 enmyBox.right > blokBox.left &&
                 enmyBox.left < blokBox.right
             ) {
-
                 this.speed = -this.speed;
             }
         });
 
-
-        if (!onBlock && this.positionY < 395) {
-            this.velocityY += this.gravity;
-        } else if (this.positionY >= 395) {
-            this.velocityY = 0;
-            this.positionY = 395;
+        if (!onBlock && !inHole && this.positionY < 390) {
+            this.positionY += 5;
         }
     }
 
@@ -544,11 +575,13 @@ class Enmy {
             this.game.score++;
             this.enmyDed = true;
             this.enmyImg.style.left = '-250%';
-            
+            this.game.player.velocityY = -5;
+
+
             setTimeout(() => {
                 this.enmy.remove();
             }, 500);
-        
+
         } else if (
             !this.game.player.fulling &&
             enemyBox.bottom > playerBox.top &&
@@ -572,7 +605,7 @@ class Game {
         this.input = new Input(this);
         this.coin = new Coin(coinEl, this);
         this.map = new Map(this, this.background, this.player);
-        
+
         // Create multiple enemies at strategic positions
         this.enemies = [
             new Enmy(this, this.background, this.player, 800),
@@ -584,7 +617,7 @@ class Game {
             new Enmy(this, this.background, this.player, 4800),
             new Enmy(this, this.background, this.player, 5400)
         ];
-        
+
         this.score = 0;
         this.fulling = false;
         this.gameOver = false;
