@@ -413,12 +413,11 @@ class Map {
     }
 }
 class Enmy {
-    constructor(game, background, player) {
+    constructor(game, background, player, startX) {
         this.game = game;
         this.background = background;
         this.player = player;
-        this.enmy = document.getElementById('enmy');
-        this.positionX = 1000 - this.background.positionX;
+        this.positionX = startX - this.background.positionX;
         this.positionY = 390;
         this.speed = 2;
         this.velocityY = 0;
@@ -427,30 +426,37 @@ class Enmy {
         this.frameInterval = 1000;
         this.frameX = 0;
         this.enmyDed = false;
+
+        // Create unique enemy element
+        this.enmy = document.createElement('div');
+        this.enmy.className = 'enemy';
+        this.enmyImg = document.createElement('div');
+        this.enmyImg.className = 'enemy-img';
+        this.enmy.appendChild(this.enmyImg);
+        document.getElementById('background').appendChild(this.enmy);
     }
 
     enmyMove(deltaTime) {
-
-        //this.velocityY += this.gravity;
-        //this.positionY += this.velocityY;
-
         this.positionX -= this.speed;
-       
-            this.frameTimer += deltaTime;
-            if (this.frameTimer >= this.frameInterval) {
-                this.frameTimer = 0;
-                if (this.frameX >= 170) {
-                    this.frameX = 0;
-                } else {
-                    this.frameX += 170;
-                }
+
+        this.frameTimer += deltaTime;
+        if (this.frameTimer >= this.frameInterval) {
+            this.frameTimer = 0;
+            if (this.frameX >= 120) {
+                this.frameX = 0;
+            } else {
+                this.frameX += 120;
             }
-            enmys.style.left = `-${this.frameX}%`;
-        
+        }
+        this.enmyImg.style.left = `-${this.frameX}%`;
+        if (this.enmyDed) {
+            this.enmyImg.style.left = '-250%';
+            
+        }
 
         this.checkObstacles();
 
-        this.enmy.style.left = `${this.positionX - this.background.positionX}px`;
+        this.enmy.style.left = `${this.positionX }px`;
         this.enmy.style.top = `${this.positionY}px`;
     }
 
@@ -516,40 +522,44 @@ class Enmy {
             top: player.positionY,
             bottom: player.positionY + player.height,
             left: player.positionX + this.background.positionX,
-            right: player.positionX + player.width+this.background.positionX    
+            right: player.positionX + player.width + this.background.positionX
         };
 
         const enemyBox = {
-            top: this.positionY+15,
+            top: this.positionY + 15,
             bottom: this.positionY + 46,
             left: this.positionX,
-            right: this.positionX +30
+            right: this.positionX + 30
         };
 
 
-        
-console.log(   playerBox);
+
+        console.log(playerBox);
         if (
             (this.game.player.isJumping || this.game.player.fulling) &&
             playerBox.bottom >= enemyBox.top &&
             playerBox.right > enemyBox.left &&
             playerBox.left < enemyBox.right
-           ) {
-                this.game.score++;
-                this.enmyDed = true;
-            this.enmy.remove();
+        ) {
+            this.game.score++;
+            this.enmyDed = true;
+            this.enmyImg.style.left = '-250%';
             
+            setTimeout(() => {
+                this.enmy.remove();
+            }, 500);
+        
         } else if (
-            !this.game.player.fulling&&
+            !this.game.player.fulling &&
             enemyBox.bottom > playerBox.top &&
-            enemyBox.top < playerBox.bottom &&            
+            enemyBox.top < playerBox.bottom &&
             playerBox.right > enemyBox.left &&
-            playerBox.left < enemyBox.right&&
+            playerBox.left < enemyBox.right &&
             this.enmyDed == false
         ) {
 
             this.game.gameOver = true;
-          
+
         }
     }
 
@@ -560,13 +570,25 @@ class Game {
         this.background = new Background(back, this);
         this.player = new Player(mario, this, marioim);
         this.input = new Input(this);
-        this.coin = new Coin(coinEl, this)
-        this.enmys = new Enmy(this, this.background, this.player)
-        this.map = new Map(this, this.background, this.player)
+        this.coin = new Coin(coinEl, this);
+        this.map = new Map(this, this.background, this.player);
+        
+        // Create multiple enemies at strategic positions
+        this.enemies = [
+            new Enmy(this, this.background, this.player, 800),
+            new Enmy(this, this.background, this.player, 1400),
+            new Enmy(this, this.background, this.player, 2000),
+            new Enmy(this, this.background, this.player, 2600),
+            new Enmy(this, this.background, this.player, 3300),
+            new Enmy(this, this.background, this.player, 4100),
+            new Enmy(this, this.background, this.player, 4800),
+            new Enmy(this, this.background, this.player, 5400)
+        ];
+        
         this.score = 0;
         this.fulling = false;
         this.gameOver = false;
-        this.win = false
+        this.win = false;
     }
 
     updateInput(deltaTime) {
@@ -577,20 +599,27 @@ class Game {
 
     }
 
+
     draw(deltaTime) {
-        this.enmys.checkCollision(deltaTime);
+        this.background.draw();
+        this.map.update();
 
         this.updateInput(deltaTime);
-        this.background.draw();
-        this.player.draw();
-        this.player.applyGravity(deltaTime);
-        this.coin.draw()
 
-        this.map.update();
+        this.player.applyGravity(deltaTime);
+        this.player.draw();
+
+        this.coin.draw();
+
+        this.enemies.forEach(enemy => {
+            enemy.checkCollision(deltaTime);
+        });
+
         if (this.player.positionY > 430) {
-            this.gameOver = true
+            this.gameOver = true;
         }
     }
+
 }
 
 const game = new Game();

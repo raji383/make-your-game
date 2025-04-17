@@ -121,3 +121,21 @@ body {
   border-radius: 8px;
   z-index: 10;
 }
+
+.enemy {
+    width: 50px;
+    height: 70px;
+    position: absolute;
+    overflow: hidden;
+    z-index: 5;
+}
+
+.enemy-img {
+    width: 487px;
+    height: 580px;
+    background-image: url('enemies.png');
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: -170%;
+}
