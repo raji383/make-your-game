@@ -73,7 +73,7 @@ class Player {
         this.marioim = marioim;
         this.positionX = 300;
         this.positionY = 390;
-        this.speed = 5;
+        this.speed = 2;
         this.jumpSpeed = 13;
         this.gravity = 0.5;
         this.frameTimer = 0;
@@ -366,6 +366,7 @@ class Map {
 
             // Bottom collision (hitting block from below)
             if (
+                !this.player.pass &&
                 this.player.velocityY < 0 &&
                 playerBox.top < blokBox.bottom &&
                 playerBox.bottom > blokBox.top &&
@@ -373,6 +374,7 @@ class Map {
                 playerBox.left < blokBox.right
             ) {
                 if (blok.box) {
+                    
                     this.game.coin.collect();
                     const newDiv = document.createElement('div');
                     newDiv.style.width = '32px';
@@ -393,6 +395,7 @@ class Map {
 
             // Top collision (landing on block)
             if (
+                !this.player.pass  &&
                 playerBox.bottom >= blokBox.top &&
                 playerBox.bottom <= blokBox.top + 10 &&
                 playerBox.right > blokBox.left &&
@@ -428,35 +431,50 @@ class Map {
 
         // Special pipe collision handling
         if (this.player.pass) {
-            const pipeBox = {
-                top: 360,
-                bottom: 400,
-                left: 1735,
-                right: 1940
-            };
-
-            // Side collision with pipe
-            if (playerBox.bottom > pipeBox.top &&
-                playerBox.top < pipeBox.bottom &&
-                playerBox.right > pipeBox.left &&
-                playerBox.left < pipeBox.right &&
-                !this.player.isJumping) {
-                this.player.positionX = this.player.moveright
-                    ? pipeBox.left - this.background.positionX - this.player.width
-                    : pipeBox.right - this.background.positionX;
-            }
-
-            // Top collision with pipe
-            if (playerBox.bottom >= pipeBox.top &&
-                playerBox.bottom <= pipeBox.bottom &&
-                playerBox.right > pipeBox.left &&
-                playerBox.left < pipeBox.right &&
-                this.player.velocityY >= 0) {
-                this.player.ground = pipeBox.top - this.player.height;
-                onBlock = true;
-                this.player.velocityY = 0;
-            }
+            const pipeBoxes = [
+                { top: 360, bottom: 400, left: 1735, right: 1940,x: false },
+                { top: 390, bottom: 400, left: 2050, right: 2100,x: true },
+                { top: 100, bottom: 400, left: 2100, right: 2200,x: false },
+            ];
+        
+            pipeBoxes.forEach(pipeBox => {
+                // Side collision with pipe
+                if (
+                    playerBox.bottom > pipeBox.top &&
+                    playerBox.top < pipeBox.bottom &&
+                    playerBox.right > pipeBox.left &&
+                    playerBox.left < pipeBox.right &&
+                    !this.player.isJumping
+                ) {
+                    this.player.positionX = this.player.moveright
+                        ? pipeBox.left - this.background.positionX - this.player.width
+                        : pipeBox.right - this.background.positionX;
+                        if (pipeBox.x) {
+                            this.player.next = false;
+                            this.player.pass = false
+                            this.game.background.positionY = 0;
+                            this.game.background.positionX = 5070;
+                            this.player.positionY = 310;
+                            this.player.positionX = 380;
+                            
+                        }
+                }
+        
+                // Top collision with pipe
+                if (
+                    playerBox.bottom >= pipeBox.top &&
+                    playerBox.bottom <= pipeBox.bottom &&
+                    playerBox.right > pipeBox.left &&
+                    playerBox.left < pipeBox.right &&
+                    this.player.velocityY >= 0
+                ) {
+                    this.player.ground = pipeBox.top - this.player.height;
+                    onBlock = true;
+                    this.player.velocityY = 0;
+                }
+            });
         }
+        
 
         if (!onBlock && this.player.positionY < 390) {
             this.player.ground = 390;
@@ -679,15 +697,40 @@ class Game {
         this.fulling = false;
         this.gameOver = false;
         this.win = false;
+        this.isPaused = false;
+        
+        // Create pause overlay
+        this.pauseOverlay = document.createElement('div');
+        this.pauseOverlay.style.position = 'fixed';
+        this.pauseOverlay.style.top = '50%';
+        this.pauseOverlay.style.left = '50%';
+        this.pauseOverlay.style.transform = 'translate(-50%, -50%)';
+        this.pauseOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        this.pauseOverlay.style.color = 'white';
+        this.pauseOverlay.style.padding = '20px';
+        this.pauseOverlay.style.fontSize = '24px';
+        this.pauseOverlay.style.display = 'none';
+        this.pauseOverlay.textContent = 'PAUSED';
+        document.body.appendChild(this.pauseOverlay);
+    }
+
+    togglePause() {
+        this.isPaused = !this.isPaused;
+        this.pauseOverlay.style.display = this.isPaused ? 'block' : 'none';
     }
 
     updateInput(deltaTime) {
         const keys = this.input.keys;
-        if (keys.includes(' ')) this.player.jump(deltaTime);
-        if (keys.includes('ArrowLeft')) this.player.moveLeft(deltaTime);
-        if (keys.includes('ArrowRight')) this.player.moveRight(deltaTime);
-        if (keys.includes('ArrowDown')) this.player.moveDown();
-
+        if (keys.includes('p')) {
+            keys.splice(keys.indexOf('p'), 1); // Remove to prevent multiple toggles
+            this.togglePause();
+        }
+        if (!this.isPaused) {
+            if (keys.includes(' ')) this.player.jump(deltaTime);
+            if (keys.includes('ArrowLeft')) this.player.moveLeft(deltaTime);
+            if (keys.includes('ArrowRight')) this.player.moveRight(deltaTime);
+            if (keys.includes('ArrowDown')) this.player.moveDown();
+        }
     }
 
 
@@ -713,24 +756,26 @@ class Game {
 
 }
 
-const game = new Game();
-let lastTime = 0;
+// Replace the animation function with this version
 function animation(timeStamp) {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
-    game.draw(deltaTime);
 
     if (!game.gameOver) {
+        game.updateInput(deltaTime);
+        if (!game.isPaused) {
+            game.draw(deltaTime);
+        }
         requestAnimationFrame(animation);
     } else {
         if (game.win) {
-            win.style.display = 'block'
+            win.style.display = 'block';
         } else {
-            over.style.display = 'block'
+            over.style.display = 'block';
         }
-
     }
-
 }
 
+const game = new Game();
+let lastTime = 0;
 animation(0);
