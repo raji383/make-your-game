@@ -256,8 +256,8 @@ class Map {
 
         this.holes = [
             { startX: 2290, endX: 2385, yPosition: 500 },
-            { startX: 2850, endX: 2950, yPosition: 500 },
-            //{ startX: 5100, endX: 5190, yPosition: 500 },
+            { startX: 2850, endX: 2990, yPosition: 500 },
+            { startX: 5100, endX: 5190, yPosition: 500 },
         ];
 
         this.bloks = [
@@ -425,7 +425,7 @@ class Map {
                 playerBox.left < blokBox.right &&
                 this.player.velocityY >= 0
             ) {
-                console.log(blok.box)
+               
                 if (blok.x) {
                     this.player.next = true;
 
@@ -699,7 +699,7 @@ class Enmy {
             this.game.gameOver = true;
 
         }
-        console.log(this.game.player.next)
+        
     }
 
 }
@@ -792,6 +792,9 @@ class Game {
 
         if (this.player.positionY > 430) {
             this.gameOver = true;
+            this.enemies.forEach(enemy => {
+                enemy.sund.play();
+            });
         }
     }
 
@@ -799,7 +802,7 @@ class Game {
 
 // Replace the animation function with this version
 function animation(timeStamp) {
-    console.log(game.player.next)
+   
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
 
