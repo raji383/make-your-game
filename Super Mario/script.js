@@ -47,6 +47,7 @@ class Background {
         this.positionY = 0;
         this.speed = 0;
         this.maxScroll = 7038 - 900;
+        this.sund= new Audio('clear.wav');
     }
 
     draw() {
@@ -55,12 +56,14 @@ class Background {
             this.positionX = this.maxScroll;
             this.game.gameOver = true
             this.game.win = true
+            this.sund.currentTime = 0;
+            this.sund.play();
         }
         if (this.positionX < 0) {
             this.positionX = 0;
         }
         this.element.style.left = `-${this.positionX}px`;
-       this.element.style.top = `-${this.positionY}%`;
+        this.element.style.top = `-${this.positionY}%`;
     }
 }
 
@@ -85,17 +88,18 @@ class Player {
         this.moveright = true;
         this.fulling = false
         this.next = false
-        this.pass= false
+        this.pass = false
+        this.jumpSound = new Audio('jump.wav');
 
     }
     moveDown() {
-       
+
         if (
             this.next
         ) {
             this.pass = true
-           
-            this.positionX =350;
+
+            this.positionX = 350;
             this.positionY = 0;
             this.game.background.positionY = 100;
 
@@ -161,6 +165,8 @@ class Player {
     jump() {
 
         if (!this.isJumping) {
+            this.jumpSound.currentTime = 0;
+            this.jumpSound.play();
 
             this.isJumping = true;
             this.velocityY = -this.jumpSpeed;
@@ -374,7 +380,7 @@ class Map {
                 playerBox.left < blokBox.right
             ) {
                 if (blok.box) {
-                    
+
                     this.game.coin.collect();
                     const newDiv = document.createElement('div');
                     newDiv.style.width = '32px';
@@ -386,7 +392,24 @@ class Map {
                     newDiv.style.left = (blokBox.left - 11) + 'px';
                     newDiv.style.zIndex = "10";
                     document.getElementById('background').appendChild(newDiv);
+
+                    const newDiv2 = document.createElement('div');
+                    newDiv2.style.width = '32px';
+                    newDiv2.style.height = '32px';
+                    newDiv2.style.backgroundImage = "url('coin.png')";
+                    newDiv2.style.backgroundSize = 'cover';
+                    newDiv2.style.position = 'absolute';
+                    newDiv2.style.top = (blokBox.top - 60) + 'px';
+                    newDiv2.style.left = (blokBox.left - 11) + 'px';
+                    newDiv2.style.zIndex = "10";
+                    document.getElementById('background').appendChild(newDiv2);
                     blok.box = false;
+                    const sund = document.createElement('audio');
+                    sund.src = 'coin.mp3';
+                    sund.play();
+                    setTimeout(() => {
+                        newDiv2.remove();
+                    }, 500);
                 }
                 this.player.velocityY = 0;
                 this.player.positionY = blokBox.bottom;
@@ -395,7 +418,7 @@ class Map {
 
             // Top collision (landing on block)
             if (
-                !this.player.pass  &&
+                !this.player.pass &&
                 playerBox.bottom >= blokBox.top &&
                 playerBox.bottom <= blokBox.top + 10 &&
                 playerBox.right > blokBox.left &&
@@ -406,6 +429,8 @@ class Map {
                 if (blok.x) {
                     this.player.next = true;
 
+                } else {
+                    this.player.next = false;
                 }
                 this.player.ground = blokBox.top - this.player.height;
                 onBlock = true;
@@ -432,35 +457,12 @@ class Map {
         // Special pipe collision handling
         if (this.player.pass) {
             const pipeBoxes = [
-                { top: 360, bottom: 400, left: 1735, right: 1940,x: false },
-                { top: 390, bottom: 400, left: 2050, right: 2100,x: true },
-                { top: 100, bottom: 400, left: 2100, right: 2200,x: false },
+                { top: 360, bottom: 400, left: 1735, right: 1940, x: false },
+                { top: 390, bottom: 400, left: 2050, right: 2100, x: true },
+                { top: 100, bottom: 400, left: 2100, right: 2200, x: false },
             ];
-        
+
             pipeBoxes.forEach(pipeBox => {
-                // Side collision with pipe
-                if (
-                    playerBox.bottom > pipeBox.top &&
-                    playerBox.top < pipeBox.bottom &&
-                    playerBox.right > pipeBox.left &&
-                    playerBox.left < pipeBox.right &&
-                    !this.player.isJumping
-                ) {
-                    this.player.positionX = this.player.moveright
-                        ? pipeBox.left - this.background.positionX - this.player.width
-                        : pipeBox.right - this.background.positionX;
-                        if (pipeBox.x) {
-                            this.player.next = false;
-                            this.player.pass = false
-                            this.game.background.positionY = 0;
-                            this.game.background.positionX = 5070;
-                            this.player.positionY = 310;
-                            this.player.positionX = 380;
-                            
-                        }
-                }
-        
-                // Top collision with pipe
                 if (
                     playerBox.bottom >= pipeBox.top &&
                     playerBox.bottom <= pipeBox.bottom &&
@@ -472,12 +474,38 @@ class Map {
                     onBlock = true;
                     this.player.velocityY = 0;
                 }
+
+                // Side collision with pipe
+                if (
+                    playerBox.bottom > pipeBox.top &&
+                    playerBox.top < pipeBox.bottom &&
+                    playerBox.right > pipeBox.left &&
+                    playerBox.left < pipeBox.right &&
+                    !this.player.isJumping
+                ) {
+                    this.player.positionX = this.player.moveright
+                        ? pipeBox.left - this.background.positionX - this.player.width
+                        : pipeBox.right - this.background.positionX;
+                    if (pipeBox.x) {
+                        this.player.next = false;
+                        this.player.pass = false
+                        this.game.background.positionY = 0;
+                        this.game.background.positionX = 5070;
+                        this.player.positionY = 310;
+                        this.player.positionX = 380;
+
+                    }
+                }
+
+
+
             });
         }
-        
+
 
         if (!onBlock && this.player.positionY < 390) {
             this.player.ground = 390;
+            this.player.next = false;
             if (!this.player.isJumping) {
                 this.player.fulling = true;
             }
@@ -504,6 +532,7 @@ class Enmy {
         this.enmyImg = document.createElement('div');
         this.enmyImg.className = 'enemy-img';
         this.enmy.appendChild(this.enmyImg);
+        this.sund= new Audio('mariodie.wav');
         document.getElementById('background').appendChild(this.enmy);
     }
     enmysfulling() {
@@ -642,7 +671,8 @@ class Enmy {
             playerBox.bottom >= enemyBox.top &&
             playerBox.right > enemyBox.left &&
             playerBox.left < enemyBox.right &&
-            !this.enmyDed
+            !this.enmyDed &&
+            !this.game.player.pass
         ) {
             this.game.score++;
             this.game.coin.collect();
@@ -661,10 +691,11 @@ class Enmy {
             enemyBox.top < playerBox.bottom &&
             playerBox.right > enemyBox.left &&
             playerBox.left < enemyBox.right &&
-            this.enmyDed == false&&
-            !this.game.player.next
+            this.enmyDed == false &&
+            !this.game.player.pass
         ) {
-
+            this.sund.currentTime = 0;
+            this.sund.play();
             this.game.gameOver = true;
 
         }
@@ -675,6 +706,7 @@ class Enmy {
 
 class Game {
     constructor() {
+        this.start = true
         this.background = new Background(back, this);
         this.player = new Player(mario, this, marioim);
         this.input = new Input(this);
@@ -698,7 +730,7 @@ class Game {
         this.gameOver = false;
         this.win = false;
         this.isPaused = false;
-        
+
         // Create pause overlay
         this.pauseOverlay = document.createElement('div');
         this.pauseOverlay.style.position = 'fixed';
@@ -735,6 +767,15 @@ class Game {
 
 
     draw(deltaTime) {
+        if (this.start) {
+            const start = document.createElement('audio');
+            start.src = 'mario.mp3';
+            start.play();
+            this.start = false
+
+        }
+
+
         this.background.draw();
         this.map.update();
 
@@ -758,8 +799,10 @@ class Game {
 
 // Replace the animation function with this version
 function animation(timeStamp) {
+    console.log(game.player.next)
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
+
 
     if (!game.gameOver) {
         game.updateInput(deltaTime);
