@@ -42,7 +42,18 @@ body {
   border-radius: 8px;
   z-index: 10;
 }
-
+#live{
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  font-family: sans-serif;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  border-radius: 8px;
+  z-index: 10;
+}
 #win {
   display: none;
   position: fixed;

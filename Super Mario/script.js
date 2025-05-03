@@ -28,14 +28,11 @@ class Coin {
         this.element.style.display = "none";
         this.game.score++;
         document.getElementById("score").textContent = `Score: ${this.game.score}`;
+      
     }
 
     draw() {
-        if (!this.collected) {
-            const offset = this.positionX - this.game.background.positionX;
-            this.element.style.left = `${offset}px`;
-            this.element.style.top = `${this.positionY}px`;
-        }
+     
     }
 }
 
@@ -696,7 +693,14 @@ class Enmy {
         ) {
             this.sund.currentTime = 0;
             this.sund.play();
-            this.game.gameOver = true;
+           // this.game.gameOver = true;
+           this.game.rest = true;
+           this.game.player.positionX = 300;
+           this.game.player.positionY = 390;
+           this.game.background.positionX = 0;
+           this.game.lives--;
+           
+        
 
         }
         
@@ -726,8 +730,10 @@ class Game {
         ];
 
         this.score = 0;
+        this.lives = 3;
         this.fulling = false;
         this.gameOver = false;
+        this.rest = false
         this.win = false;
         this.isPaused = false;
 
@@ -752,6 +758,18 @@ class Game {
     }
 
     updateInput(deltaTime) {
+        if (this.rest) {
+            this.enemies.forEach(enemy => {
+              enemy.enmyDed = false;
+              enemy.positionX = enemy.startX;     // نعيدها للـ absolute startX
+            });
+            this.rest = false;
+          }
+        
+        if (this.lives <= 0) {
+            this.gameOver = true;
+
+        }
         const keys = this.input.keys;
         if (keys.includes('p')) {
             keys.splice(keys.indexOf('p'), 1); // Remove to prevent multiple toggles
@@ -767,6 +785,7 @@ class Game {
 
 
     draw(deltaTime) {
+        document.getElementById("live").textContent = `lives: ${this.lives}`;
         if (this.start) {
             const start = document.createElement('audio');
             start.src = 'mario.mp3';
