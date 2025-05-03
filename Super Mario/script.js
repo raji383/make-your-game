@@ -772,9 +772,13 @@ class Game {
         
         const initialPositions = [800, 1400, 2000, 2600, 3300, 4100, 4800, 5400];
         this.enemies.forEach((enemy, index) => {
-            console.log(initialPositions)
+           
             enemy.positionX = initialPositions[index];
-            enemy.enmyDed = false;
+            //enemy.enmyDed = false;
+            if (enemy.enmyDed) {
+                this.enemies.push(new Enmy(this, this.background, this.player, enemy.positionX));
+            }
+            
             enemy.enmyImg.style.left = '0';
             enemy.speed = Math.abs(enemy.speed);
         });
