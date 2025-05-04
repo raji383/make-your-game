@@ -46,7 +46,7 @@ class Background {
         this.positionX = 0;
         this.positionY = 0;
         this.speed = 0;
-        this.maxScroll = 7038 - 900;
+        this.maxScroll = 7038 -  document.getElementById("game").offsetWidth;
         this.sund = new Audio('clear.wav');
     }
 
